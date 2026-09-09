@@ -19,22 +19,24 @@
 <text x="496" y="270" fill="#888" text-anchor="middle">Aug 28</text>
 <text x="638" y="270" fill="#888" text-anchor="middle">Sep 03</text>
 <text x="780" y="270" fill="#888" text-anchor="middle">Sep 09</text>
-<polyline points="777.7,195.4 777.9,149.2 779.1,196.8 779.4,140.8 779.6,161.1 779.9,139.4 780.0,157.6" fill="none" stroke="#4ecdc4" stroke-width="2"/>
-<circle cx="777.7" cy="195.4" r="3" fill="#4ecdc4"/>
-<circle cx="777.9" cy="149.2" r="3" fill="#4ecdc4"/>
-<circle cx="779.1" cy="196.8" r="3" fill="#4ecdc4"/>
-<circle cx="779.4" cy="140.8" r="3" fill="#4ecdc4"/>
-<circle cx="779.6" cy="161.1" r="3" fill="#4ecdc4"/>
-<circle cx="779.9" cy="139.4" r="3" fill="#4ecdc4"/>
-<circle cx="780.0" cy="157.6" r="3" fill="#4ecdc4"/>
-<polyline points="777.7,168.1 777.9,51.2 779.1,174.4 779.4,89.0 779.6,171.6 779.9,42.1 780.0,42.1" fill="none" stroke="#ff6b6b" stroke-width="2"/>
-<circle cx="777.7" cy="168.1" r="3" fill="#ff6b6b"/>
-<circle cx="777.9" cy="51.2" r="3" fill="#ff6b6b"/>
-<circle cx="779.1" cy="174.4" r="3" fill="#ff6b6b"/>
-<circle cx="779.4" cy="89.0" r="3" fill="#ff6b6b"/>
-<circle cx="779.6" cy="171.6" r="3" fill="#ff6b6b"/>
+<polyline points="777.6,195.4 777.8,149.2 779.0,196.8 779.3,140.8 779.5,161.1 779.8,139.4 779.9,157.6 780.0,163.9" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+<circle cx="777.6" cy="195.4" r="3" fill="#4ecdc4"/>
+<circle cx="777.8" cy="149.2" r="3" fill="#4ecdc4"/>
+<circle cx="779.0" cy="196.8" r="3" fill="#4ecdc4"/>
+<circle cx="779.3" cy="140.8" r="3" fill="#4ecdc4"/>
+<circle cx="779.5" cy="161.1" r="3" fill="#4ecdc4"/>
+<circle cx="779.8" cy="139.4" r="3" fill="#4ecdc4"/>
+<circle cx="779.9" cy="157.6" r="3" fill="#4ecdc4"/>
+<circle cx="780.0" cy="163.9" r="3" fill="#4ecdc4"/>
+<polyline points="777.6,168.1 777.8,51.2 779.0,174.4 779.3,89.0 779.5,171.6 779.8,42.1 779.9,42.1 780.0,135.9" fill="none" stroke="#ff6b6b" stroke-width="2"/>
+<circle cx="777.6" cy="168.1" r="3" fill="#ff6b6b"/>
+<circle cx="777.8" cy="51.2" r="3" fill="#ff6b6b"/>
+<circle cx="779.0" cy="174.4" r="3" fill="#ff6b6b"/>
+<circle cx="779.3" cy="89.0" r="3" fill="#ff6b6b"/>
+<circle cx="779.5" cy="171.6" r="3" fill="#ff6b6b"/>
+<circle cx="779.8" cy="42.1" r="3" fill="#ff6b6b"/>
 <circle cx="779.9" cy="42.1" r="3" fill="#ff6b6b"/>
-<circle cx="780.0" cy="42.1" r="3" fill="#ff6b6b"/>
+<circle cx="780.0" cy="135.9" r="3" fill="#ff6b6b"/>
 <circle cx="660" cy="50" r="4" fill="#4ecdc4"/><text x="670" y="50" fill="#e0e0e0" dominant-baseline="middle">Hub API</text>
 <circle cx="660" cy="68" r="4" fill="#ff6b6b"/><text x="670" y="68" fill="#e0e0e0" dominant-baseline="middle">Registry</text>
 <line x1="656" y1="82" x2="664" y2="82" stroke="#e0e0e0" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/><text x="670" y="86" fill="#e0e0e0" dominant-baseline="middle">Timeout</text>
