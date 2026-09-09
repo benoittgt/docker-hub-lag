@@ -19,35 +19,37 @@
 <text x="496" y="270" fill="#888" text-anchor="middle">Aug 28</text>
 <text x="638" y="270" fill="#888" text-anchor="middle">Sep 03</text>
 <text x="780" y="270" fill="#888" text-anchor="middle">Sep 09</text>
-<polyline points="777.2,209.0 777.5,174.4 778.7,210.1 779.0,168.1 779.1,183.3 779.5,167.0 779.6,180.7 779.7,185.4 779.7,187.5 779.8,209.0 779.9,157.6 780.0,154.4" fill="none" stroke="#4ecdc4" stroke-width="2" opacity="1"/>
+<polyline points="777.2,209.0 777.4,174.4 778.6,210.1 778.9,168.1 779.1,183.3 779.4,167.1 779.5,180.7 779.6,185.4 779.7,187.5 779.8,209.0 779.9,157.6 779.9,154.4 780.0,215.3" fill="none" stroke="#4ecdc4" stroke-width="2" opacity="1"/>
 <circle cx="777.2" cy="209.0" r="3" fill="#4ecdc4"/>
-<circle cx="777.5" cy="174.4" r="3" fill="#4ecdc4"/>
-<circle cx="778.7" cy="210.1" r="3" fill="#4ecdc4"/>
-<circle cx="779.0" cy="168.1" r="3" fill="#4ecdc4"/>
+<circle cx="777.4" cy="174.4" r="3" fill="#4ecdc4"/>
+<circle cx="778.6" cy="210.1" r="3" fill="#4ecdc4"/>
+<circle cx="778.9" cy="168.1" r="3" fill="#4ecdc4"/>
 <circle cx="779.1" cy="183.3" r="3" fill="#4ecdc4"/>
-<circle cx="779.5" cy="167.0" r="3" fill="#4ecdc4"/>
-<circle cx="779.6" cy="180.7" r="3" fill="#4ecdc4"/>
-<circle cx="779.7" cy="185.4" r="3" fill="#4ecdc4"/>
+<circle cx="779.4" cy="167.1" r="3" fill="#4ecdc4"/>
+<circle cx="779.5" cy="180.7" r="3" fill="#4ecdc4"/>
+<circle cx="779.6" cy="185.4" r="3" fill="#4ecdc4"/>
 <circle cx="779.7" cy="187.5" r="3" fill="#4ecdc4"/>
 <circle cx="779.8" cy="209.0" r="3" fill="#4ecdc4"/>
 <circle cx="779.9" cy="157.6" r="3" fill="#4ecdc4"/>
-<circle cx="780.0" cy="154.4" r="3" fill="#4ecdc4"/>
-<polyline points="777.2,188.6 777.5,100.9 778.7,193.3 779.0,129.2 779.1,191.2 779.5,94.1 779.6,94.1 779.7,164.4 779.7,85.7 779.8,186.5 779.9,140.8 780.0,106.1" fill="none" stroke="#ff6b6b" stroke-width="2" opacity="1"/>
+<circle cx="779.9" cy="154.4" r="3" fill="#4ecdc4"/>
+<circle cx="780.0" cy="215.3" r="3" fill="#4ecdc4"/>
+<polyline points="777.2,188.6 777.4,100.9 778.6,193.3 778.9,129.2 779.1,191.2 779.4,94.1 779.5,94.1 779.6,164.4 779.7,85.7 779.8,186.5 779.9,140.8 779.9,106.1 780.0,194.9" fill="none" stroke="#ff6b6b" stroke-width="2" opacity="1"/>
 <circle cx="777.2" cy="188.6" r="3" fill="#ff6b6b"/>
-<circle cx="777.5" cy="100.9" r="3" fill="#ff6b6b"/>
-<circle cx="778.7" cy="193.3" r="3" fill="#ff6b6b"/>
-<circle cx="779.0" cy="129.2" r="3" fill="#ff6b6b"/>
+<circle cx="777.4" cy="100.9" r="3" fill="#ff6b6b"/>
+<circle cx="778.6" cy="193.3" r="3" fill="#ff6b6b"/>
+<circle cx="778.9" cy="129.2" r="3" fill="#ff6b6b"/>
 <circle cx="779.1" cy="191.2" r="3" fill="#ff6b6b"/>
+<circle cx="779.4" cy="94.1" r="3" fill="#ff6b6b"/>
 <circle cx="779.5" cy="94.1" r="3" fill="#ff6b6b"/>
-<circle cx="779.6" cy="94.1" r="3" fill="#ff6b6b"/>
-<circle cx="779.7" cy="164.4" r="3" fill="#ff6b6b"/>
+<circle cx="779.6" cy="164.4" r="3" fill="#ff6b6b"/>
 <circle cx="779.7" cy="85.7" r="3" fill="#ff6b6b"/>
 <circle cx="779.8" cy="186.5" r="3" fill="#ff6b6b"/>
 <circle cx="779.9" cy="140.8" r="3" fill="#ff6b6b"/>
-<circle cx="780.0" cy="106.1" r="3" fill="#ff6b6b"/>
+<circle cx="779.9" cy="106.1" r="3" fill="#ff6b6b"/>
+<circle cx="780.0" cy="194.9" r="3" fill="#ff6b6b"/>
 <circle cx="660" cy="50" r="4" fill="#4ecdc4"/><text x="670" y="50" fill="#e0e0e0" dominant-baseline="middle">Hub API</text>
 <circle cx="660" cy="68" r="4" fill="#ff6b6b"/><text x="670" y="68" fill="#e0e0e0" dominant-baseline="middle">Registry</text>
 <line x1="656" y1="82" x2="664" y2="82" stroke="#e0e0e0" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/><text x="670" y="86" fill="#e0e0e0" dominant-baseline="middle">Timeout</text>
-<text x="70" y="288" fill="#4ecdc4" font-size="11">min: 76ms  max: 182ms  avg: 129ms  timeouts: 0</text>
-<text x="70" y="304" fill="#ff6b6b" font-size="11">min: 108ms  max: 313ms  avg: 210ms  timeouts: 0</text>
+<text x="70" y="288" fill="#4ecdc4" font-size="11">min: 66ms  max: 182ms  avg: 124ms  timeouts: 0</text>
+<text x="70" y="304" fill="#ff6b6b" font-size="11">min: 105ms  max: 313ms  avg: 202ms  timeouts: 0</text>
 </svg>
