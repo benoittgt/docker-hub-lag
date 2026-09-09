@@ -1,13 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"encoding/csv"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"sync"
 	"time"
 
@@ -88,6 +91,10 @@ func runCheck(pat string) error {
 
 	if err := recordResult(tag, pushDuration, hubLag, registryLag); err != nil {
 		return fmt.Errorf("recording result: %w", err)
+	}
+
+	if err := cleanupTags(pat); err != nil {
+		fmt.Fprintf(os.Stderr, "warning: cleanup failed: %v\n", err)
 	}
 
 	return nil
@@ -236,6 +243,110 @@ func recordResult(tag string, pushDuration time.Duration, hubLagMs, registryLagM
 		fmt.Sprintf("%d", hubLagMs),
 		fmt.Sprintf("%d", registryLagMs),
 	})
+}
+
+func cleanupTags(pat string) error {
+	token, err := hubLogin(pat)
+	if err != nil {
+		return fmt.Errorf("hub login: %w", err)
+	}
+
+	tags, err := listTags()
+	if err != nil {
+		return fmt.Errorf("listing tags: %w", err)
+	}
+
+	if len(tags) <= keepTags {
+		if verbose {
+			fmt.Fprintf(os.Stderr, "cleanup: %d tags, nothing to delete\n", len(tags))
+		}
+		return nil
+	}
+
+	sort.Strings(tags)
+	toDelete := tags[:len(tags)-keepTags]
+
+	for _, tag := range toDelete {
+		if err := deleteTag(tag, token); err != nil {
+			fmt.Fprintf(os.Stderr, "warning: failed to delete tag %s: %v\n", tag, err)
+			continue
+		}
+		if verbose {
+			fmt.Fprintf(os.Stderr, "cleanup: deleted %s\n", tag)
+		}
+	}
+
+	return nil
+}
+
+func hubLogin(pat string) (string, error) {
+	body, _ := json.Marshal(map[string]string{
+		"username": user,
+		"password": pat,
+	})
+
+	resp, err := http.Post("https://hub.docker.com/v2/users/login", "application/json", bytes.NewReader(body))
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("login returned %d", resp.StatusCode)
+	}
+
+	var result struct {
+		Token string `json:"token"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", err
+	}
+
+	return result.Token, nil
+}
+
+func listTags() ([]string, error) {
+	url := fmt.Sprintf("https://hub.docker.com/v2/repositories/%s/%s/tags?page_size=100", user, repoName)
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result struct {
+		Results []struct {
+			Name string `json:"name"`
+		} `json:"results"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	var tags []string
+	for _, r := range result.Results {
+		tags = append(tags, r.Name)
+	}
+	return tags, nil
+}
+
+func deleteTag(tag string, token string) error {
+	url := fmt.Sprintf("https://hub.docker.com/v2/repositories/%s/%s/tags/%s", user, repoName, tag)
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("delete returned %d", resp.StatusCode)
+	}
+	return nil
 }
 
 func runGraph() error {
