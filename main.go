@@ -349,7 +349,3 @@ func deleteTag(tag string, token string) error {
 	return nil
 }
 
-func runGraph() error {
-	fmt.Println("graph mode not yet implemented")
-	return nil
-}
