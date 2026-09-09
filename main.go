@@ -38,7 +38,13 @@ var (
 
 func main() {
 	if len(os.Args) > 1 && os.Args[1] == "graph" {
-		if err := runGraph(); err != nil {
+		sample := false
+		for _, a := range os.Args[2:] {
+			if a == "--sample" {
+				sample = true
+			}
+		}
+		if err := runGraph(sample); err != nil {
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			os.Exit(1)
 		}

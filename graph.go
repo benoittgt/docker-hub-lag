@@ -29,10 +29,34 @@ var windows = []struct {
 	{"month", 30 * 24 * time.Hour, "Last 30 days"},
 }
 
-func runGraph() error {
-	data, err := readCSV()
-	if err != nil {
-		return fmt.Errorf("reading CSV: %w", err)
+func sampleData() []measurement {
+	now := time.Now().UTC()
+	var data []measurement
+	baselines := []struct{ hub, reg int64 }{
+		{85, 110}, {92, 105}, {78, 115}, {105, 98}, {-1, 120},
+		{88, -1}, {95, 108}, {-1, -1}, {82, 112}, {90, 100},
+		{75, 125}, {110, 95},
+	}
+	for i, b := range baselines {
+		data = append(data, measurement{
+			timestamp:  now.Add(-time.Duration(len(baselines)-1-i) * 5 * time.Minute),
+			hubLagMs:   b.hub,
+			registryMs: b.reg,
+		})
+	}
+	return data
+}
+
+func runGraph(sample bool) error {
+	var data []measurement
+	var err error
+	if sample {
+		data = sampleData()
+	} else {
+		data, err = readCSV()
+		if err != nil {
+			return fmt.Errorf("reading CSV: %w", err)
+		}
 	}
 
 	if err := os.MkdirAll(graphDir, 0755); err != nil {
@@ -227,11 +251,34 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 	drawSeries(toPoints(data, func(m measurement) int64 { return m.hubLagMs }), "#4ecdc4")
 	drawSeries(toPoints(data, func(m measurement) int64 { return m.registryMs }), "#ff6b6b")
 
+	drawTimeouts := func(data []measurement, getValue func(m measurement) int64, color string) {
+		for _, m := range data {
+			if getValue(m) >= 0 {
+				continue
+			}
+			xRatio := float64(m.timestamp.Sub(tMin)) / float64(window)
+			if xRatio < 0 || xRatio > 1 {
+				continue
+			}
+			x := float64(padLeft) + chartW*xRatio
+			fmt.Fprintf(f, `<line x1="%.1f" y1="%d" x2="%.1f" y2="%d" stroke="%s" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/>`,
+				x, padTop, x, height-padBottom, color)
+			fmt.Fprintf(f, "\n")
+		}
+	}
+
+	drawTimeouts(data, func(m measurement) int64 { return m.hubLagMs }, "#4ecdc4")
+	drawTimeouts(data, func(m measurement) int64 { return m.registryMs }, "#ff6b6b")
+
 	fmt.Fprintf(f, `<circle cx="%d" cy="%d" r="4" fill="#4ecdc4"/>`, width-padRight-120, padTop+10)
 	fmt.Fprintf(f, `<text x="%d" y="%d" fill="#e0e0e0" dominant-baseline="middle">Hub API</text>`, width-padRight-110, padTop+10)
 	fmt.Fprintf(f, "\n")
 	fmt.Fprintf(f, `<circle cx="%d" cy="%d" r="4" fill="#ff6b6b"/>`, width-padRight-120, padTop+28)
 	fmt.Fprintf(f, `<text x="%d" y="%d" fill="#e0e0e0" dominant-baseline="middle">Registry</text>`, width-padRight-110, padTop+28)
+	fmt.Fprintf(f, "\n")
+	fmt.Fprintf(f, `<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#e0e0e0" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/>`,
+		width-padRight-124, padTop+42, width-padRight-116, padTop+42)
+	fmt.Fprintf(f, `<text x="%d" y="%d" fill="#e0e0e0" dominant-baseline="middle">Timeout</text>`, width-padRight-110, padTop+46)
 	fmt.Fprintf(f, "\n")
 
 	fmt.Fprintf(f, "</svg>\n")
