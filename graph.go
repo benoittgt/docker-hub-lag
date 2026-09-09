@@ -32,16 +32,27 @@ var windows = []struct {
 func sampleData() []measurement {
 	now := time.Now().UTC()
 	var data []measurement
-	baselines := []struct{ hub, reg int64 }{
-		{85, 110}, {92, 105}, {78, 115}, {105, 98}, {-1, 120},
-		{88, -1}, {95, 108}, {-1, -1}, {82, 112}, {90, 100},
-		{75, 125}, {110, 95},
-	}
-	for i, b := range baselines {
+	totalPoints := 30 * 24 * 12 // 30 days at 5min intervals
+	for i := 0; i < totalPoints; i++ {
+		ts := now.Add(-time.Duration(totalPoints-1-i) * 5 * time.Minute)
+		hour := ts.Hour()
+		hub := int64(80 + (i*7)%40 + hour*2)
+		reg := int64(100 + (i*11)%30 + hour)
+		// inject timeouts: ~1% of points
+		if i%97 == 0 {
+			hub = -1
+		}
+		if i%131 == 0 {
+			reg = -1
+		}
+		// occasional spike
+		if i%200 == 0 {
+			hub = int64(300 + (i*3)%200)
+		}
 		data = append(data, measurement{
-			timestamp:  now.Add(-time.Duration(len(baselines)-1-i) * 5 * time.Minute),
-			hubLagMs:   b.hub,
-			registryMs: b.reg,
+			timestamp:  ts,
+			hubLagMs:   hub,
+			registryMs: reg,
 		})
 	}
 	return data
@@ -123,11 +134,11 @@ func readCSV() ([]measurement, error) {
 func writeSVG(path string, title string, data []measurement, window time.Duration) error {
 	const (
 		width      = 800
-		height     = 300
+		height     = 340
 		padLeft    = 70
 		padRight   = 20
 		padTop     = 40
-		padBottom  = 50
+		padBottom  = 90
 	)
 
 	chartW := float64(width - padLeft - padRight)
@@ -231,6 +242,14 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		if len(pts) == 0 {
 			return
 		}
+		strokeW := "1.5"
+		opacity := "0.6"
+		dotR := "1.5"
+		if len(pts) <= 20 {
+			strokeW = "2"
+			opacity = "1"
+			dotR = "3"
+		}
 		if len(pts) >= 2 {
 			var polyline string
 			for _, p := range pts {
@@ -239,12 +258,14 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 				}
 				polyline += fmt.Sprintf("%.1f,%.1f", p.x, p.y)
 			}
-			fmt.Fprintf(f, `<polyline points="%s" fill="none" stroke="%s" stroke-width="2"/>`, polyline, color)
+			fmt.Fprintf(f, `<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" opacity="%s"/>`, polyline, color, strokeW, opacity)
 			fmt.Fprintf(f, "\n")
 		}
-		for _, p := range pts {
-			fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="3" fill="%s"/>`, p.x, p.y, color)
-			fmt.Fprintf(f, "\n")
+		if len(pts) <= 50 {
+			for _, p := range pts {
+				fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="%s" fill="%s"/>`, p.x, p.y, dotR, color)
+				fmt.Fprintf(f, "\n")
+			}
 		}
 	}
 
@@ -280,6 +301,41 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		width-padRight-124, padTop+42, width-padRight-116, padTop+42)
 	fmt.Fprintf(f, `<text x="%d" y="%d" fill="#e0e0e0" dominant-baseline="middle">Timeout</text>`, width-padRight-110, padTop+46)
 	fmt.Fprintf(f, "\n")
+
+	statsLine := func(getValue func(m measurement) int64, color string, y int) {
+		var vals []int64
+		timeouts := 0
+		for _, m := range data {
+			v := getValue(m)
+			if v < 0 {
+				timeouts++
+				continue
+			}
+			vals = append(vals, v)
+		}
+		if len(vals) == 0 {
+			return
+		}
+		minV, maxV := vals[0], vals[0]
+		var sum int64
+		for _, v := range vals {
+			if v < minV {
+				minV = v
+			}
+			if v > maxV {
+				maxV = v
+			}
+			sum += v
+		}
+		avg := sum / int64(len(vals))
+		fmt.Fprintf(f, `<text x="%d" y="%d" fill="%s" font-size="11">min: %dms  max: %dms  avg: %dms  timeouts: %d</text>`,
+			padLeft, y, color, minV, maxV, avg, timeouts)
+		fmt.Fprintf(f, "\n")
+	}
+
+	statsY := height - padBottom + 38
+	statsLine(func(m measurement) int64 { return m.hubLagMs }, "#4ecdc4", statsY)
+	statsLine(func(m measurement) int64 { return m.registryMs }, "#ff6b6b", statsY+16)
 
 	fmt.Fprintf(f, "</svg>\n")
 	return nil
