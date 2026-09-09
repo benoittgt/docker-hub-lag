@@ -11,6 +11,7 @@ permissions:
 jobs:
   measure:
     runs-on: ubuntu-latest
+    environment: DOCKERHUB_PAT
     steps:
       - uses: actions/checkout@v4
 
