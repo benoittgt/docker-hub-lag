@@ -183,8 +183,10 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		fmt.Fprintf(f, "\n")
 	}
 
-	toPoints := func(data []measurement, getValue func(m measurement) int64) string {
-		var points string
+	type point struct{ x, y float64 }
+
+	toPoints := func(data []measurement, getValue func(m measurement) int64) []point {
+		var pts []point
 		for _, m := range data {
 			val := getValue(m)
 			if val < 0 {
@@ -196,25 +198,34 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 			}
 			x := float64(padLeft) + chartW*xRatio
 			y := float64(padTop) + chartH*(1-float64(val)/float64(maxVal))
-			if points != "" {
-				points += " "
-			}
-			points += fmt.Sprintf("%.1f,%.1f", x, y)
+			pts = append(pts, point{x, y})
 		}
-		return points
+		return pts
 	}
 
-	hubPoints := toPoints(data, func(m measurement) int64 { return m.hubLagMs })
-	regPoints := toPoints(data, func(m measurement) int64 { return m.registryMs })
+	drawSeries := func(pts []point, color string) {
+		if len(pts) == 0 {
+			return
+		}
+		if len(pts) >= 2 {
+			var polyline string
+			for _, p := range pts {
+				if polyline != "" {
+					polyline += " "
+				}
+				polyline += fmt.Sprintf("%.1f,%.1f", p.x, p.y)
+			}
+			fmt.Fprintf(f, `<polyline points="%s" fill="none" stroke="%s" stroke-width="2"/>`, polyline, color)
+			fmt.Fprintf(f, "\n")
+		}
+		for _, p := range pts {
+			fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="3" fill="%s"/>`, p.x, p.y, color)
+			fmt.Fprintf(f, "\n")
+		}
+	}
 
-	if hubPoints != "" {
-		fmt.Fprintf(f, `<polyline points="%s" fill="none" stroke="#4ecdc4" stroke-width="2"/>`, hubPoints)
-		fmt.Fprintf(f, "\n")
-	}
-	if regPoints != "" {
-		fmt.Fprintf(f, `<polyline points="%s" fill="none" stroke="#ff6b6b" stroke-width="2"/>`, regPoints)
-		fmt.Fprintf(f, "\n")
-	}
+	drawSeries(toPoints(data, func(m measurement) int64 { return m.hubLagMs }), "#4ecdc4")
+	drawSeries(toPoints(data, func(m measurement) int64 { return m.registryMs }), "#ff6b6b")
 
 	fmt.Fprintf(f, `<circle cx="%d" cy="%d" r="4" fill="#4ecdc4"/>`, width-padRight-120, padTop+10)
 	fmt.Fprintf(f, `<text x="%d" y="%d" fill="#e0e0e0" dominant-baseline="middle">Hub API</text>`, width-padRight-110, padTop+10)
