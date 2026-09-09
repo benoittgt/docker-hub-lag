@@ -27,4 +27,5 @@ Results are recorded in `data/lag.csv` and rendered as SVG charts below.
 go build -o docker-lag .
 PAT=your_docker_hub_pat ./docker-lag --user=youruser --verbose
 ./docker-lag graph
+./docker-lag graph --sample  # synthetic data with timeouts for visual testing
 ```
