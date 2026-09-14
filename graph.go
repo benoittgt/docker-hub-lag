@@ -240,57 +240,71 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 
 	type point struct{ x, y float64 }
 
-	toPoints := func(data []measurement, getValue func(m measurement) int64) []point {
-		var pts []point
+	toSegments := func(data []measurement, getValue func(m measurement) int64) [][]point {
+		var segments [][]point
+		var seg []point
 		for _, m := range data {
 			val := getValue(m)
-			if val < 0 {
-				continue
-			}
 			xRatio := float64(m.timestamp.Sub(tMin)) / float64(window)
 			if xRatio < 0 || xRatio > 1 {
 				continue
 			}
+			if val < 0 {
+				if len(seg) > 0 {
+					segments = append(segments, seg)
+					seg = nil
+				}
+				continue
+			}
 			x := float64(padLeft) + chartW*xRatio
 			y := toY(float64(val))
-			pts = append(pts, point{x, y})
+			seg = append(seg, point{x, y})
 		}
-		return pts
+		if len(seg) > 0 {
+			segments = append(segments, seg)
+		}
+		return segments
 	}
 
-	drawSeries := func(pts []point, color string) {
-		if len(pts) == 0 {
+	drawSeries := func(segments [][]point, color string) {
+		var totalPts int
+		for _, seg := range segments {
+			totalPts += len(seg)
+		}
+		if totalPts == 0 {
 			return
 		}
 		strokeW := "1.5"
 		opacity := "0.6"
 		dotR := "1.5"
-		if len(pts) <= 20 {
+		if totalPts <= 20 {
 			strokeW = "2"
 			opacity = "1"
 			dotR = "3"
 		}
-		if len(pts) >= 2 {
-			var polyline string
-			for _, p := range pts {
-				if polyline != "" {
-					polyline += " "
+		for _, seg := range segments {
+			if len(seg) >= 2 {
+				var polyline string
+				for _, p := range seg {
+					if polyline != "" {
+						polyline += " "
+					}
+					polyline += fmt.Sprintf("%.1f,%.1f", p.x, p.y)
 				}
-				polyline += fmt.Sprintf("%.1f,%.1f", p.x, p.y)
-			}
-			fmt.Fprintf(f, `<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" opacity="%s"/>`, polyline, color, strokeW, opacity)
-			fmt.Fprintf(f, "\n")
-		}
-		if len(pts) <= 50 {
-			for _, p := range pts {
-				fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="%s" fill="%s"/>`, p.x, p.y, dotR, color)
+				fmt.Fprintf(f, `<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" opacity="%s"/>`, polyline, color, strokeW, opacity)
 				fmt.Fprintf(f, "\n")
+			}
+			if totalPts <= 50 {
+				for _, p := range seg {
+					fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="%s" fill="%s"/>`, p.x, p.y, dotR, color)
+					fmt.Fprintf(f, "\n")
+				}
 			}
 		}
 	}
 
-	drawSeries(toPoints(data, func(m measurement) int64 { return m.hubLagMs }), "#4ecdc4")
-	drawSeries(toPoints(data, func(m measurement) int64 { return m.registryMs }), "#ff6b6b")
+	drawSeries(toSegments(data, func(m measurement) int64 { return m.hubLagMs }), "#4ecdc4")
+	drawSeries(toSegments(data, func(m measurement) int64 { return m.registryMs }), "#ff6b6b")
 
 	drawTimeouts := func(data []measurement, getValue func(m measurement) int64, color string) {
 		for _, m := range data {
