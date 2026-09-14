@@ -339,17 +339,26 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 	statsLine := func(getValue func(m measurement) int64, color string, y int) {
 		var vals []int64
 		timeouts := 0
+		var firstTimeout, lastTimeout time.Time
 		for _, m := range data {
 			v := getValue(m)
 			if v < 0 {
 				timeouts++
+				if firstTimeout.IsZero() {
+					firstTimeout = m.timestamp
+				}
+				lastTimeout = m.timestamp
 				continue
 			}
 			vals = append(vals, v)
 		}
 		if len(vals) == 0 {
-			fmt.Fprintf(f, `<text x="%d" y="%d" fill="%s" font-size="11">timeouts: %d</text>`,
-				padLeft, y, color, timeouts)
+			txt := fmt.Sprintf("timeouts: %d", timeouts)
+			if timeouts > 0 {
+				txt += fmt.Sprintf("  first: %s  last: %s", firstTimeout.Format("Jan 02 15:04"), lastTimeout.Format("Jan 02 15:04"))
+			}
+			fmt.Fprintf(f, `<text x="%d" y="%d" fill="%s" font-size="11">%s</text>`,
+				padLeft, y, color, txt)
 			fmt.Fprintf(f, "\n")
 			return
 		}
@@ -365,8 +374,12 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 			sum += v
 		}
 		avg := sum / int64(len(vals))
-		fmt.Fprintf(f, `<text x="%d" y="%d" fill="%s" font-size="11">min: %dms  max: %dms  avg: %dms  timeouts: %d</text>`,
-			padLeft, y, color, minV, maxV, avg, timeouts)
+		txt := fmt.Sprintf("min: %dms  max: %dms  avg: %dms  timeouts: %d", minV, maxV, avg, timeouts)
+		if timeouts > 0 {
+			txt += fmt.Sprintf("  first: %s  last: %s", firstTimeout.Format("Jan 02 15:04"), lastTimeout.Format("Jan 02 15:04"))
+		}
+		fmt.Fprintf(f, `<text x="%d" y="%d" fill="%s" font-size="11">%s</text>`,
+			padLeft, y, color, txt)
 		fmt.Fprintf(f, "\n")
 	}
 
