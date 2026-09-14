@@ -6,7 +6,6 @@ import (
 	"math"
 	"os"
 	"path/filepath"
-	"sort"
 	"strconv"
 	"time"
 )
@@ -171,26 +170,31 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		return nil
 	}
 
-	var vals []int64
-	for _, m := range data {
-		if m.hubLagMs >= 0 {
-			vals = append(vals, m.hubLagMs)
-		}
-		if m.registryMs >= 0 {
-			vals = append(vals, m.registryMs)
-		}
-	}
-
 	var maxVal int64
-	if len(vals) > 0 {
-		sort.Slice(vals, func(i, j int) bool { return vals[i] < vals[j] })
-		p95 := vals[int(float64(len(vals)-1)*0.95)]
-		maxVal = p95 * 2
+	for _, m := range data {
+		if m.hubLagMs > maxVal {
+			maxVal = m.hubLagMs
+		}
+		if m.registryMs > maxVal {
+			maxVal = m.registryMs
+		}
 	}
 	if maxVal <= 0 {
 		maxVal = 100
 	}
-	maxVal = int64(math.Ceil(float64(maxVal)/100) * 100)
+
+	logMax := math.Log10(float64(maxVal))
+	if logMax < 1 {
+		logMax = 2
+	}
+
+	toY := func(val float64) float64 {
+		if val < 1 {
+			val = 1
+		}
+		ratio := math.Log10(val) / logMax
+		return float64(padTop) + chartH*(1-ratio)
+	}
 
 	now := time.Now().UTC()
 	tMin := now.Add(-window)
@@ -202,15 +206,18 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		padLeft, height-padBottom, width-padRight, height-padBottom)
 	fmt.Fprintf(f, "\n")
 
-	gridLines := 4
-	for i := 0; i <= gridLines; i++ {
-		val := maxVal * int64(i) / int64(gridLines)
-		y := float64(padTop) + chartH*(1-float64(val)/float64(maxVal))
+	for exp := 0.0; exp <= logMax; exp++ {
+		val := math.Pow(10, exp)
+		y := toY(val)
 		fmt.Fprintf(f, `<line x1="%d" y1="%.0f" x2="%d" y2="%.0f" stroke="#333" stroke-width="1" stroke-dasharray="4"/>`,
 			padLeft, y, width-padRight, y)
 		fmt.Fprintf(f, "\n")
-		fmt.Fprintf(f, `<text x="%d" y="%.0f" fill="#888" text-anchor="end" dominant-baseline="middle">%dms</text>`,
-			padLeft-5, y, val)
+		label := fmt.Sprintf("%dms", int64(val))
+		if val >= 1000 {
+			label = fmt.Sprintf("%.0fs", val/1000)
+		}
+		fmt.Fprintf(f, `<text x="%d" y="%.0f" fill="#888" text-anchor="end" dominant-baseline="middle">%s</text>`,
+			padLeft-5, y, label)
 		fmt.Fprintf(f, "\n")
 	}
 
@@ -231,11 +238,7 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		fmt.Fprintf(f, "\n")
 	}
 
-	type point struct {
-		x, y    float64
-		val     int64
-		clipped bool
-	}
+	type point struct{ x, y float64 }
 
 	toPoints := func(data []measurement, getValue func(m measurement) int64) []point {
 		var pts []point
@@ -249,14 +252,8 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 				continue
 			}
 			x := float64(padLeft) + chartW*xRatio
-			displayVal := val
-			clipped := false
-			if displayVal > maxVal {
-				displayVal = maxVal
-				clipped = true
-			}
-			y := float64(padTop) + chartH*(1-float64(displayVal)/float64(maxVal))
-			pts = append(pts, point{x, y, val, clipped})
+			y := toY(float64(val))
+			pts = append(pts, point{x, y})
 		}
 		return pts
 	}
@@ -286,21 +283,9 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		}
 		if len(pts) <= 50 {
 			for _, p := range pts {
-				if p.clipped {
-					continue
-				}
 				fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="%s" fill="%s"/>`, p.x, p.y, dotR, color)
 				fmt.Fprintf(f, "\n")
 			}
-		}
-		for _, p := range pts {
-			if !p.clipped {
-				continue
-			}
-			fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="4" fill="%s" stroke="#1a1a2e" stroke-width="1"/>`, p.x, p.y, color)
-			fmt.Fprintf(f, "\n")
-			fmt.Fprintf(f, `<text x="%.1f" y="%.1f" fill="%s" font-size="10" text-anchor="middle">%dms</text>`, p.x, p.y-8, color, p.val)
-			fmt.Fprintf(f, "\n")
 		}
 	}
 
