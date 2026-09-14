@@ -6,6 +6,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -49,6 +50,10 @@ func sampleData() []measurement {
 		// occasional spike
 		if i%200 == 0 {
 			hub = int64(300 + (i*3)%200)
+		}
+		// rare extreme outlier, mirrors a real slow poll
+		if i == totalPoints-50 {
+			hub = 19027
 		}
 		data = append(data, measurement{
 			timestamp:  ts,
@@ -166,14 +171,21 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		return nil
 	}
 
-	var maxVal int64
+	var vals []int64
 	for _, m := range data {
-		if m.hubLagMs > maxVal {
-			maxVal = m.hubLagMs
+		if m.hubLagMs >= 0 {
+			vals = append(vals, m.hubLagMs)
 		}
-		if m.registryMs > maxVal {
-			maxVal = m.registryMs
+		if m.registryMs >= 0 {
+			vals = append(vals, m.registryMs)
 		}
+	}
+
+	var maxVal int64
+	if len(vals) > 0 {
+		sort.Slice(vals, func(i, j int) bool { return vals[i] < vals[j] })
+		p95 := vals[int(float64(len(vals)-1)*0.95)]
+		maxVal = p95 * 2
 	}
 	if maxVal <= 0 {
 		maxVal = 100
@@ -219,7 +231,11 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		fmt.Fprintf(f, "\n")
 	}
 
-	type point struct{ x, y float64 }
+	type point struct {
+		x, y    float64
+		val     int64
+		clipped bool
+	}
 
 	toPoints := func(data []measurement, getValue func(m measurement) int64) []point {
 		var pts []point
@@ -233,8 +249,14 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 				continue
 			}
 			x := float64(padLeft) + chartW*xRatio
-			y := float64(padTop) + chartH*(1-float64(val)/float64(maxVal))
-			pts = append(pts, point{x, y})
+			displayVal := val
+			clipped := false
+			if displayVal > maxVal {
+				displayVal = maxVal
+				clipped = true
+			}
+			y := float64(padTop) + chartH*(1-float64(displayVal)/float64(maxVal))
+			pts = append(pts, point{x, y, val, clipped})
 		}
 		return pts
 	}
@@ -264,9 +286,21 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 		}
 		if len(pts) <= 50 {
 			for _, p := range pts {
+				if p.clipped {
+					continue
+				}
 				fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="%s" fill="%s"/>`, p.x, p.y, dotR, color)
 				fmt.Fprintf(f, "\n")
 			}
+		}
+		for _, p := range pts {
+			if !p.clipped {
+				continue
+			}
+			fmt.Fprintf(f, `<circle cx="%.1f" cy="%.1f" r="4" fill="%s" stroke="#1a1a2e" stroke-width="1"/>`, p.x, p.y, color)
+			fmt.Fprintf(f, "\n")
+			fmt.Fprintf(f, `<text x="%.1f" y="%.1f" fill="%s" font-size="10" text-anchor="middle">%dms</text>`, p.x, p.y-8, color, p.val)
+			fmt.Fprintf(f, "\n")
 		}
 	}
 
