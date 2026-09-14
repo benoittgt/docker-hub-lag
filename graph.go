@@ -24,6 +24,7 @@ var windows = []struct {
 	label    string
 }{
 	{"hour", time.Hour, "Last hour"},
+	{"6hours", 6 * time.Hour, "Last 6 hours"},
 	{"day", 24 * time.Hour, "Last 24 hours"},
 	{"week", 7 * 24 * time.Hour, "Last 7 days"},
 	{"month", 30 * 24 * time.Hour, "Last 30 days"},
@@ -314,6 +315,9 @@ func writeSVG(path string, title string, data []measurement, window time.Duratio
 			vals = append(vals, v)
 		}
 		if len(vals) == 0 {
+			fmt.Fprintf(f, `<text x="%d" y="%d" fill="%s" font-size="11">timeouts: %d</text>`,
+				padLeft, y, color, timeouts)
+			fmt.Fprintf(f, "\n")
 			return
 		}
 		minV, maxV := vals[0], vals[0]

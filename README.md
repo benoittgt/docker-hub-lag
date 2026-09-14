@@ -12,6 +12,9 @@ Results are recorded in `data/lag.csv` and rendered as SVG charts below.
 ## Last hour
 ![Last hour](graphs/hour.svg)
 
+## Last 6 hours
+![Last 6 hours](graphs/6hours.svg)
+
 ## Last 24 hours
 ![Last day](graphs/day.svg)
 
