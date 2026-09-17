@@ -9,41 +9,41 @@
 <text x="65" y="166" fill="#888" text-anchor="end" dominant-baseline="middle">10ms</text>
 <line x1="70" y1="82" x2="780" y2="82" stroke="#333" stroke-width="1" stroke-dasharray="4"/>
 <text x="65" y="82" fill="#888" text-anchor="end" dominant-baseline="middle">100ms</text>
-<text x="70" y="270" fill="#888" text-anchor="middle">00:45</text>
-<text x="212" y="270" fill="#888" text-anchor="middle">00:57</text>
-<text x="354" y="270" fill="#888" text-anchor="middle">01:09</text>
-<text x="496" y="270" fill="#888" text-anchor="middle">01:21</text>
-<text x="638" y="270" fill="#888" text-anchor="middle">01:33</text>
-<text x="780" y="270" fill="#888" text-anchor="middle">01:45</text>
-<polyline points="122.2,73.9 182.0,65.4 241.5,73.9 300.9,85.5 361.2,67.3 422.0,71.1 480.7,70.9 540.7,61.3 599.5,67.0 660.6,61.0 720.0,62.3 779.5,60.6" fill="none" stroke="#4ecdc4" stroke-width="2" opacity="1"/>
-<circle cx="122.2" cy="73.9" r="3" fill="#4ecdc4"/>
-<circle cx="182.0" cy="65.4" r="3" fill="#4ecdc4"/>
-<circle cx="241.5" cy="73.9" r="3" fill="#4ecdc4"/>
-<circle cx="300.9" cy="85.5" r="3" fill="#4ecdc4"/>
-<circle cx="361.2" cy="67.3" r="3" fill="#4ecdc4"/>
-<circle cx="422.0" cy="71.1" r="3" fill="#4ecdc4"/>
-<circle cx="480.7" cy="70.9" r="3" fill="#4ecdc4"/>
-<circle cx="540.7" cy="61.3" r="3" fill="#4ecdc4"/>
-<circle cx="599.5" cy="67.0" r="3" fill="#4ecdc4"/>
-<circle cx="660.6" cy="61.0" r="3" fill="#4ecdc4"/>
-<circle cx="720.0" cy="62.3" r="3" fill="#4ecdc4"/>
-<circle cx="779.5" cy="60.6" r="3" fill="#4ecdc4"/>
-<polyline points="122.2,77.6 182.0,66.3 241.5,40.0 300.9,76.0 361.2,59.2 422.0,41.3 480.7,61.9 540.7,46.5 599.5,78.6 660.6,48.8 720.0,41.1 779.5,45.3" fill="none" stroke="#ff6b6b" stroke-width="2" opacity="1"/>
-<circle cx="122.2" cy="77.6" r="3" fill="#ff6b6b"/>
-<circle cx="182.0" cy="66.3" r="3" fill="#ff6b6b"/>
-<circle cx="241.5" cy="40.0" r="3" fill="#ff6b6b"/>
-<circle cx="300.9" cy="76.0" r="3" fill="#ff6b6b"/>
-<circle cx="361.2" cy="59.2" r="3" fill="#ff6b6b"/>
-<circle cx="422.0" cy="41.3" r="3" fill="#ff6b6b"/>
-<circle cx="480.7" cy="61.9" r="3" fill="#ff6b6b"/>
-<circle cx="540.7" cy="46.5" r="3" fill="#ff6b6b"/>
-<circle cx="599.5" cy="78.6" r="3" fill="#ff6b6b"/>
-<circle cx="660.6" cy="48.8" r="3" fill="#ff6b6b"/>
-<circle cx="720.0" cy="41.1" r="3" fill="#ff6b6b"/>
-<circle cx="779.5" cy="45.3" r="3" fill="#ff6b6b"/>
+<text x="70" y="270" fill="#888" text-anchor="middle">00:50</text>
+<text x="212" y="270" fill="#888" text-anchor="middle">01:02</text>
+<text x="354" y="270" fill="#888" text-anchor="middle">01:14</text>
+<text x="496" y="270" fill="#888" text-anchor="middle">01:26</text>
+<text x="638" y="270" fill="#888" text-anchor="middle">01:38</text>
+<text x="780" y="270" fill="#888" text-anchor="middle">01:50</text>
+<polyline points="123.2,65.4 182.8,73.9 242.2,85.5 302.5,67.3 363.3,71.1 422.0,70.9 482.0,61.3 540.8,67.0 601.9,61.0 661.3,62.3 720.8,60.6 779.6,87.6" fill="none" stroke="#4ecdc4" stroke-width="2" opacity="1"/>
+<circle cx="123.2" cy="65.4" r="3" fill="#4ecdc4"/>
+<circle cx="182.8" cy="73.9" r="3" fill="#4ecdc4"/>
+<circle cx="242.2" cy="85.5" r="3" fill="#4ecdc4"/>
+<circle cx="302.5" cy="67.3" r="3" fill="#4ecdc4"/>
+<circle cx="363.3" cy="71.1" r="3" fill="#4ecdc4"/>
+<circle cx="422.0" cy="70.9" r="3" fill="#4ecdc4"/>
+<circle cx="482.0" cy="61.3" r="3" fill="#4ecdc4"/>
+<circle cx="540.8" cy="67.0" r="3" fill="#4ecdc4"/>
+<circle cx="601.9" cy="61.0" r="3" fill="#4ecdc4"/>
+<circle cx="661.3" cy="62.3" r="3" fill="#4ecdc4"/>
+<circle cx="720.8" cy="60.6" r="3" fill="#4ecdc4"/>
+<circle cx="779.6" cy="87.6" r="3" fill="#4ecdc4"/>
+<polyline points="123.2,66.3 182.8,40.0 242.2,76.0 302.5,59.2 363.3,41.3 422.0,61.9 482.0,46.5 540.8,78.6 601.9,48.8 661.3,41.1 720.8,45.3 779.6,77.3" fill="none" stroke="#ff6b6b" stroke-width="2" opacity="1"/>
+<circle cx="123.2" cy="66.3" r="3" fill="#ff6b6b"/>
+<circle cx="182.8" cy="40.0" r="3" fill="#ff6b6b"/>
+<circle cx="242.2" cy="76.0" r="3" fill="#ff6b6b"/>
+<circle cx="302.5" cy="59.2" r="3" fill="#ff6b6b"/>
+<circle cx="363.3" cy="41.3" r="3" fill="#ff6b6b"/>
+<circle cx="422.0" cy="61.9" r="3" fill="#ff6b6b"/>
+<circle cx="482.0" cy="46.5" r="3" fill="#ff6b6b"/>
+<circle cx="540.8" cy="78.6" r="3" fill="#ff6b6b"/>
+<circle cx="601.9" cy="48.8" r="3" fill="#ff6b6b"/>
+<circle cx="661.3" cy="41.1" r="3" fill="#ff6b6b"/>
+<circle cx="720.8" cy="45.3" r="3" fill="#ff6b6b"/>
+<circle cx="779.6" cy="77.3" r="3" fill="#ff6b6b"/>
 <circle cx="660" cy="50" r="4" fill="#4ecdc4"/><text x="670" y="50" fill="#e0e0e0" dominant-baseline="middle">Hub API</text>
 <circle cx="660" cy="68" r="4" fill="#ff6b6b"/><text x="670" y="68" fill="#e0e0e0" dominant-baseline="middle">Registry</text>
 <line x1="656" y1="82" x2="664" y2="82" stroke="#e0e0e0" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/><text x="670" y="86" fill="#e0e0e0" dominant-baseline="middle">Timeout</text>
-<text x="70" y="288" fill="#4ecdc4" font-size="11">min: 91ms  max: 180ms  avg: 148ms  timeouts: 0</text>
+<text x="70" y="288" fill="#4ecdc4" font-size="11">min: 86ms  max: 180ms  avg: 144ms  timeouts: 0</text>
 <text x="70" y="304" fill="#ff6b6b" font-size="11">min: 110ms  max: 317ms  avg: 214ms  timeouts: 0</text>
 </svg>
